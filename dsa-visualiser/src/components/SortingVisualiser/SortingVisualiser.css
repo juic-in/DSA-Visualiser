@@ -1,11 +1,30 @@
+.visualiser-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 100vh;
+}
+
 .array-container {
-   position: absolute;
-   left: 10px;
-   width: 100vw; 
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 60vh;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .array-bar {
-  display: inline-block;
   width: 10px;
   margin: 0 1px;
   background-color: teal;
@@ -14,4 +33,23 @@
 
 .array-bar.compare {
   background-color: red;
+}
+
+.array-bar.sorted {
+  background-color: green;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.speed-slider-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 5px;
 }

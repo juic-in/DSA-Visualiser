@@ -5,7 +5,7 @@ function App() {
 
   return (
     <>
-      <SortingVisualiser min={5} max={1000} arraySize={200}/>
+      <SortingVisualiser min={5} max={1000} arraySize={250}/>
     </>
   )
 }

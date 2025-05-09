@@ -20,6 +20,8 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
   const [activeIndices, setActiveIndices] = useState<number[]>([]);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isSorted, setIsSorted] = useState(false);
+  const [animationSpeed, setAnimationSpeed] = useState(50);
 
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -32,6 +34,7 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
       timeoutsRef.current = [];
     }
     setIsAnimating(false)
+    setIsSorted(false);
     const newArray = [];
     for (let i = 0; i < arraySize; i++) {
       newArray.push(randomIntFromInterval(min, max));
@@ -74,8 +77,6 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
   };
 
   const playAnimations = (animations: Animation[]) => {
-    const animationSpeed = 100;
-
     for (let i = 0; i < animations.length; i++) {
       const timerId = setTimeout(() => {
         // if (!isAnimating) return;
@@ -93,36 +94,58 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
             return newArr;
           });
         }
+
+        if (i === animations.length - 1) {
+          setIsSorted(true); 
+        }
       }, i * animationSpeed);
       timeoutsRef.current.push(timerId)
     }
   };
 
   return (
-    <>
+    <div className="visualiser-wrapper">
       <div className="array-container">
         {renderingArray.map((value, index) => (
           <div
             key={index}
             className={`array-bar ${
               activeIndices.includes(index) ? 'compare' : ''
-            }`}
+            } ${isSorted ? 'sorted' : ''}`}
             style={{
               height: `${value}px`,
-              width: `${barWidth}px`, // Dynamic width
+              width: `${barWidth}px`,
               margin: '0 1px',
             }}
           ></div>
         ))}
-        <button onClick={() => resetArray()}>Generate New Array</button>
-        <button onClick={() => animateSort('merge')}>Merge Sort</button>
-        <button onClick={() => animateSort('quick')}>Quick Sort</button>
-        <button onClick={() => animateSort('bubble')}>Bubble Sort</button>
-        <button onClick={() => animateSort('selection')}>Selection Sort</button>
-        <button onClick={() => animateSort('insertion')}>Insertion Sort</button>
-        <button onClick={() => animateSort('bogo')}>Bogo Sort</button>
       </div>
-    </>
+  
+      <div className="controls">
+        <div className="buttons-container">
+          <button onClick={() => resetArray()}>Generate New Array</button>
+          <button onClick={() => animateSort('merge')}>Merge Sort</button>
+          <button onClick={() => animateSort('quick')}>Quick Sort</button>
+          <button onClick={() => animateSort('bubble')}>Bubble Sort</button>
+          <button onClick={() => animateSort('selection')}>Selection Sort</button>
+          <button onClick={() => animateSort('insertion')}>Insertion Sort</button>
+          <button onClick={() => animateSort('bogo')}>Bogo Sort</button>
+        </div>
+  
+        <div className="speed-slider-container">
+          <label htmlFor="animationSpeed">Animation Speed: </label>
+          <input
+            id="animationSpeed"
+            type="range"
+            min="1"
+            max="100"
+            value={animationSpeed}
+            onChange={(e) => setAnimationSpeed(Number(e.target.value))}
+          />
+          <span>{animationSpeed}</span>
+        </div>
+      </div>
+    </div>
   );
 };
 
