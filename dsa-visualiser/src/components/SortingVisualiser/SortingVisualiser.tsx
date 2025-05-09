@@ -33,7 +33,7 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
       timeoutsRef.current.forEach(clearTimeout);
       timeoutsRef.current = [];
     }
-    setIsAnimating(false)
+    setIsAnimating(false);
     setIsSorted(false);
     const newArray = [];
     for (let i = 0; i < arraySize; i++) {
@@ -53,7 +53,9 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const animateSort = (type: 'merge' | 'bubble' | 'insertion' | 'quick' | 'bogo' | 'selection') => {
+  const animateSort = (
+    type: 'merge' | 'bubble' | 'insertion' | 'quick' | 'bogo' | 'selection'
+  ) => {
     if (isAnimating) return;
     setIsAnimating(true);
     let animations: Animation[] = [];
@@ -96,53 +98,59 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
         }
 
         if (i === animations.length - 1) {
-          setIsSorted(true); 
+          setIsSorted(true);
         }
       }, i * animationSpeed);
-      timeoutsRef.current.push(timerId)
+      timeoutsRef.current.push(timerId);
     }
   };
 
   return (
-    <div className="visualiser-wrapper">
-      <div className="array-container">
-        {renderingArray.map((value, index) => (
-          <div
-            key={index}
-            className={`array-bar ${
-              activeIndices.includes(index) ? 'compare' : ''
-            } ${isSorted ? 'sorted' : ''}`}
-            style={{
-              height: `${value}px`,
-              width: `${barWidth}px`,
-              margin: '0 1px',
-            }}
-          ></div>
-        ))}
-      </div>
-  
-      <div className="controls">
-        <div className="buttons-container">
-          <button onClick={() => resetArray()}>Generate New Array</button>
-          <button onClick={() => animateSort('merge')}>Merge Sort</button>
-          <button onClick={() => animateSort('quick')}>Quick Sort</button>
-          <button onClick={() => animateSort('bubble')}>Bubble Sort</button>
-          <button onClick={() => animateSort('selection')}>Selection Sort</button>
-          <button onClick={() => animateSort('insertion')}>Insertion Sort</button>
-          <button onClick={() => animateSort('bogo')}>Bogo Sort</button>
+    <div className="main-container">
+      <div className="visualiser-wrapper">
+        <div className="array-container">
+          {renderingArray.map((value, index) => (
+            <div
+              key={index}
+              className={`array-bar ${
+                activeIndices.includes(index) ? 'compare' : ''
+              } ${isSorted ? 'sorted' : ''}`}
+              style={{
+                height: `${value}px`,
+                width: `${barWidth}px`,
+                margin: '0 1px',
+              }}
+            ></div>
+          ))}
         </div>
-  
-        <div className="speed-slider-container">
-          <label htmlFor="animationSpeed">Animation Speed: </label>
-          <input
-            id="animationSpeed"
-            type="range"
-            min="1"
-            max="100"
-            value={animationSpeed}
-            onChange={(e) => setAnimationSpeed(Number(e.target.value))}
-          />
-          <span>{animationSpeed}</span>
+
+        <div className="controls">
+          <div className="buttons-container">
+            <button onClick={() => resetArray()}>Generate New Array</button>
+            <button onClick={() => animateSort('merge')}>Merge Sort</button>
+            <button onClick={() => animateSort('quick')}>Quick Sort</button>
+            <button onClick={() => animateSort('bubble')}>Bubble Sort</button>
+            <button onClick={() => animateSort('selection')}>
+              Selection Sort
+            </button>
+            <button onClick={() => animateSort('insertion')}>
+              Insertion Sort
+            </button>
+            <button onClick={() => animateSort('bogo')}>Bogo Sort</button>
+          </div>
+
+          <div className="speed-slider-container">
+            <label htmlFor="animationSpeed">Animation Speed: </label>
+            <input
+              id="animationSpeed"
+              type="range"
+              min="1"
+              max="100"
+              value={animationSpeed}
+              onChange={(e) => setAnimationSpeed(Number(e.target.value))}
+            />
+            <span>{animationSpeed}</span>
+          </div>
         </div>
       </div>
     </div>
