@@ -1,0 +1,17 @@
+.array-container {
+   position: absolute;
+   left: 10px;
+   width: 100vw; 
+}
+
+.array-bar {
+  display: inline-block;
+  width: 10px;
+  margin: 0 1px;
+  background-color: teal;
+  transition: height 0.2s ease, background-color 0.2s ease;
+}
+
+.array-bar.compare {
+  background-color: red;
+}
