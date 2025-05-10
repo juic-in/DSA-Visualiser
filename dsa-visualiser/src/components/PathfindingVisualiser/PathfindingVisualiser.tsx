@@ -46,7 +46,7 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
   const [currentAlgorithm, setCurrentAlgorithm] = useState('');
   const [isAnimating, setisAnimating] = useState(false);
   const [isPathfindingComplete, setIsPathfindingComplete] = useState(false);
-  const [animationSpeed, setAnimationSpeed] = useState(50);
+  const [animationSpeed, setAnimationSpeed] = useState(20);
   const [path, setPath] = useState<CellIdentifier[]>([]);
 
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -56,8 +56,9 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
       timeoutsRef.current.forEach(clearTimeout);
       timeoutsRef.current = [];
     }
-    
 
+    setisAnimating(false);
+    setPath([]);
     setCurrentAlgorithm('');
     setAction('start');
     setStart(null);
@@ -75,8 +76,8 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
   };
 
   useEffect(() => {
-    resetCells()
-  }, [])
+    resetCells();
+  }, []);
   const handleCellClick = (row: number, col: number) => {
     const newCells = cells.map((row) => row.map((cell) => ({ ...cell })));
     const node = newCells[row][col];
@@ -106,8 +107,8 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
     if (isPathfindingComplete) {
       resetCells();
     }
-    
-    if (!start || !end) return
+
+    if (!start || !end) return;
 
     if (isAnimating) return;
 
@@ -135,30 +136,37 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
   };
 
   const playPathfindingAnimations = (animations: Animation[]) => {
-    for (let i = 0; i < animations.length; i++) {
+    const visitAnimations = animations.filter((a) => a.type === 'visit');
+    const pathAnimations = animations.filter((a) => a.type === 'path');
+
+    for (let i = 0; i < visitAnimations.length; i++) {
       const timerId = setTimeout(() => {
-        const animation = animations[i];
+        const animation = visitAnimations[i];
 
-        if (animation.type === 'visit') {
-          const newCells = [...cells];
+        setCells((prevCells) => {
+          const newCells = prevCells.map((row) =>
+            row.map((cell) => ({ ...cell }))
+          );
           newCells[animation.node.row][animation.node.col].isVisited = true;
-          setCells(newCells);
-        } else if (animation.type === 'path') {
-          const newCells = [...cells];
-          newCells[animation.node.row][animation.node.col].previousNode = animation.node;
-          setCells(newCells);
+          return newCells;
+        });
+        console.log('visited:', animation.node);
+      }, i * animationSpeed);
+      timeoutsRef.current.push(timerId);
+    }
 
-          setPath((prevPath) => [...prevPath, animation.node]);
-        }
+    const delay = visitAnimations.length * animationSpeed;
+    pathAnimations.forEach((animation, i) => {
+      const timerId = setTimeout(() => {
+        setPath((prev) => [...prev, animation.node]);
 
-        // Finish the animation
-        if (i === animations.length - 1) {
+        if (i === pathAnimations.length - 1) {
           setIsPathfindingComplete(true);
           setisAnimating(false);
         }
-      }, i * animationSpeed);
-      timeoutsRef.current.push(timerId)
-    }
+      }, delay + i * animationSpeed);
+      timeoutsRef.current.push(timerId);
+    });
   };
 
   return (
@@ -175,7 +183,9 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
                 isStart={isStart(cell)}
                 isEnd={isEnd(cell)}
                 isVisited={cell.isVisited}
-                isPath={path.some((p) => p.row === cell.row && p.col === cell.col)} 
+                isPath={path.some(
+                  (p) => p.row === cell.row && p.col === cell.col
+                )}
                 onClick={handleCellClick}
               />
             ))}
@@ -189,13 +199,22 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
         <button onClick={() => setAction('wall')}>Wall</button>
 
         {/* Algorithm Selection */}
-        <button onClick={() => animatePathfinding('dijkstra')} disabled={isAnimating}>
+        <button
+          onClick={() => animatePathfinding('dijkstra')}
+          disabled={isAnimating}
+        >
           Dijkstra
         </button>
-        <button onClick={() => animatePathfinding('bfs')} disabled={isAnimating}>
+        <button
+          onClick={() => animatePathfinding('bfs')}
+          disabled={isAnimating}
+        >
           BFS
         </button>
-        <button onClick={() => animatePathfinding('dfs')} disabled={isAnimating}>
+        <button
+          onClick={() => animatePathfinding('dfs')}
+          disabled={isAnimating}
+        >
           DFS
         </button>
 
