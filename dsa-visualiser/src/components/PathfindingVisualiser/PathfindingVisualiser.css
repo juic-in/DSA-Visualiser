@@ -1,0 +1,36 @@
+.cells-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ddd;
+  transition: background-color 0.2s;
+}
+
+.cell.start {
+  background-color: green;
+}
+
+.cell.end {
+  background-color: red;
+}
+
+.cell.wall {
+  background-color: black;
+}
+
+.cell:hover {
+  cursor: pointer;
+  background-color: #f0f0f0;
+}

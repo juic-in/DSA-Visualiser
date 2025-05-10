@@ -22,6 +22,7 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isSorted, setIsSorted] = useState(false);
   const [animationSpeed, setAnimationSpeed] = useState(50);
+  const [currentAlgorithm, setCurrentAlgorithm] = useState('');
 
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -35,6 +36,7 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
     }
     setIsAnimating(false);
     setIsSorted(false);
+    setCurrentAlgorithm('');
     const newArray = [];
     for (let i = 0; i < arraySize; i++) {
       newArray.push(randomIntFromInterval(min, max));
@@ -56,22 +58,30 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
   const animateSort = (
     type: 'merge' | 'bubble' | 'insertion' | 'quick' | 'bogo' | 'selection'
   ) => {
+    if (isSorted) {
+      resetArray();
+    }
     if (isAnimating) return;
+
     setIsAnimating(true);
     let animations: Animation[] = [];
 
     switch (type) {
       case 'merge':
         animations = getMergeSortAnimations(renderingArray.slice());
+        setCurrentAlgorithm('Merge-Sort')
         break;
       case 'bubble':
         animations = getBubbleSortAnimations(renderingArray.slice());
+        setCurrentAlgorithm('Bubble-Sort')
         break;
       case 'insertion':
         animations = getInsertionSortAnimations(renderingArray.slice());
+        setCurrentAlgorithm('Insertion-Sort')
         break;
       case 'quick':
         animations = getQuickSortAnimations(renderingArray.slice());
+        setCurrentAlgorithm('Quick-Sort')
         break;
     }
 
@@ -108,6 +118,7 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
   return (
     <div className="main-container">
       <div className="visualiser-wrapper">
+        <p className="algo-type-text">Current Algorithm: {currentAlgorithm}</p>
         <div className="array-container">
           {renderingArray.map((value, index) => (
             <div
