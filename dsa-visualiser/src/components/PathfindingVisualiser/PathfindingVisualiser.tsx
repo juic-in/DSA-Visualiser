@@ -82,22 +82,28 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
     const newCells = cells.map((row) => row.map((cell) => ({ ...cell })));
     const node = newCells[row][col];
     if (action === 'wall') {
-      node.isWall = !node.isWall;
+      if (!isStart({ row, col }) && !isEnd({ row, col })) {
+        node.isWall = !node.isWall;
+      }
     } else if (action === 'start') {
-      setStart({ row, col });
+      if (!node.isWall && !isEnd({ row, col })) {
+        setStart({ row, col });
+      }
     } else if (action === 'end') {
-      setEnd({ row, col });
+      if (!node.isWall && !isStart({ row, col })) {
+        setEnd({ row, col });
+      }
     }
     setCells(newCells);
   };
 
   // To check if the node is the start or end
-  function isStart(cell: Cell | null): boolean {
+  function isStart(cell: CellIdentifier | null): boolean {
     if (!cell || !start) return false;
     return cell.row === start.row && cell.col === start.col;
   }
 
-  function isEnd(cell: Cell | null): boolean {
+  function isEnd(cell: CellIdentifier | null): boolean {
     if (!cell || !end) return false;
     return cell.row === end.row && cell.col === end.col;
   }
