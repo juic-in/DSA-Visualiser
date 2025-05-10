@@ -102,15 +102,27 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
     return cell.row === end.row && cell.col === end.col;
   }
 
+  const clearVisitedAndPath = () => {
+    setCells((prevCells) =>
+      prevCells.map((row) =>
+        row.map((cell) => ({
+          ...cell,
+          isVisited: false,
+          distance: Infinity,
+          previousNode: null,
+        }))
+      )
+    );
+    setPath([]);
+    setIsPathfindingComplete(false);
+  };
+
   // Pathfinding Animation Logic
   const animatePathfinding = (type: 'dijkstra' | 'aStar' | 'bfs' | 'dfs') => {
-    if (isPathfindingComplete) {
-      resetCells();
-    }
+    if (!start || !end || isAnimating) return;
 
-    if (!start || !end) return;
-
-    if (isAnimating) return;
+    // Only clear visited/path markers, not the whole grid
+    clearVisitedAndPath();
 
     setisAnimating(true);
     let animations: Animation[] = [];
@@ -120,14 +132,6 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
         animations = getDijkstraAnimations(cells, start, end);
         setCurrentAlgorithm('Dijkstra');
         break;
-      // case 'bfs':
-      //   animations = getBFSAnimations(cells, start, end);
-      //   setCurrentAlgorithm('BFS');
-      //   break;
-      // case 'dfs':
-      //   animations = getDFSAnimations(cells, start, end);
-      //   setCurrentAlgorithm('DFS');
-      //   break;
       default:
         return;
     }
