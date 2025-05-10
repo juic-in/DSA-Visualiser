@@ -1,5 +1,7 @@
-import { startTransition, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './PathfindingVisualiser.css';
+import { Cell } from './Cell';
+
 interface Cell {
   row: number;
   col: number;
@@ -13,6 +15,7 @@ interface CellIdentifier {
   row: number;
   col: number;
 }
+
 interface Props {
   maxRows: number;
   maxCols: number;
@@ -57,7 +60,7 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
     } else if (action === 'end') {
       setEnd({ row, col });
     }
-    setCells(newCells)
+    setCells(newCells);
   };
 
   useEffect(() => {
@@ -80,18 +83,19 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
         {cells.map((row, rowIndex) => (
           <div key={rowIndex} className="row">
             {row.map((cell, colIndex) => (
-              <div
+              <Cell
                 key={colIndex}
-                className={`cell ${cell.isWall ? 'wall' : ''} 
-                ${isStart(cell) ? 'start' : ''} 
-                ${isEnd(cell) ? 'end' : ''}`}
-                onClick={() => handleCellClick(cell.row, cell.col)}
+                row={cell.row}
+                col={cell.col}
+                isWall={cell.isWall}
+                isStart={isStart(cell)}
+                isEnd={isEnd(cell)}
+                onClick={handleCellClick}
               />
             ))}
           </div>
         ))}
       </div>
-      
       <div className="controls">
         <button onClick={() => setAction('start')}>Start Node</button>
         <button onClick={() => setAction('end')}>End Node</button>
