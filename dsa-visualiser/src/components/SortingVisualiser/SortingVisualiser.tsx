@@ -55,9 +55,7 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const animateSort = (
-    type: 'merge' | 'bubble' | 'insertion' | 'quick' | 'bogo' | 'selection'
-  ) => {
+  const animateSort = () => {
     if (isSorted) {
       resetArray();
     }
@@ -66,27 +64,27 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
     setIsAnimating(true);
     let animations: Animation[] = [];
 
-    switch (type) {
-      case 'merge':
+    switch (currentAlgorithm) {
+      case 'Merge-Sort':
         animations = getMergeSortAnimations(renderingArray.slice());
-        setCurrentAlgorithm('Merge-Sort')
         break;
-      case 'bubble':
+      case 'Bubble-Sort':
         animations = getBubbleSortAnimations(renderingArray.slice());
-        setCurrentAlgorithm('Bubble-Sort')
         break;
-      case 'insertion':
+      case 'Insertion-Sort':
         animations = getInsertionSortAnimations(renderingArray.slice());
-        setCurrentAlgorithm('Insertion-Sort')
         break;
-      case 'quick':
+      case 'Quick-Sort':
         animations = getQuickSortAnimations(renderingArray.slice());
-        setCurrentAlgorithm('Quick-Sort')
         break;
     }
 
     playAnimations(animations);
   };
+
+  useEffect(() => {
+    animateSort();
+  }, [currentAlgorithm]);
 
   const playAnimations = (animations: Animation[]) => {
     for (let i = 0; i < animations.length; i++) {
@@ -138,16 +136,24 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
         <div className="controls">
           <div className="buttons-container">
             <button onClick={() => resetArray()}>Generate New Array</button>
-            <button onClick={() => animateSort('merge')}>Merge Sort</button>
-            <button onClick={() => animateSort('quick')}>Quick Sort</button>
-            <button onClick={() => animateSort('bubble')}>Bubble Sort</button>
-            <button onClick={() => animateSort('selection')}>
+            <button onClick={() => setCurrentAlgorithm('Merge-Sort')}>
+              Merge Sort
+            </button>
+            <button onClick={() => setCurrentAlgorithm('Quick-Sort')}>
+              Quick Sort
+            </button>
+            <button onClick={() => setCurrentAlgorithm('Bubble-Sort')}>
+              Bubble Sort
+            </button>
+            <button onClick={() => setCurrentAlgorithm('Selection-Sort')}>
               Selection Sort
             </button>
-            <button onClick={() => animateSort('insertion')}>
+            <button onClick={() => setCurrentAlgorithm('Insertion-Sort')}>
               Insertion Sort
             </button>
-            <button onClick={() => animateSort('bogo')}>Bogo Sort</button>
+            <button onClick={() => setCurrentAlgorithm('Bogo-Sort')}>
+              Bogo Sort
+            </button>
           </div>
 
           <div className="speed-slider-container">
