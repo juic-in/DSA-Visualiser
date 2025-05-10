@@ -111,7 +111,6 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
 
         if (i === animations.length - 1) {
           setIsSorted(true);
-          setIsAnimating(false)
         }
       }, i * animationSpeed);
       timeoutsRef.current.push(timerId);
