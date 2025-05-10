@@ -1,19 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './PathfindingVisualiser.css';
 import { Cell } from './Cell';
+import { getDijkstraAnimations } from './PathfindingAlgorithms/Dijkstra';
 
-interface Cell {
+export interface Cell {
   row: number;
   col: number;
   isWall: boolean;
   isVisited: boolean;
-  distance?: number;
+  distance: number;
   previousNode: object | null;
 }
 
-interface CellIdentifier {
+export interface CellIdentifier {
   row: number;
   col: number;
+}
+
+export interface Animation {
+  type: 'visit' | 'path';
+  node: CellIdentifier;
 }
 
 interface Props {
@@ -37,8 +43,26 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
   const [start, setStart] = useState<CellIdentifier | null>(null);
   const [end, setEnd] = useState<CellIdentifier | null>(null);
   const [action, setAction] = useState('start');
+  const [currentAlgorithm, setCurrentAlgorithm] = useState('');
+  const [isAnimating, setisAnimating] = useState(false);
+  const [isPathfindingComplete, setIsPathfindingComplete] = useState(false);
+  const [animationSpeed, setAnimationSpeed] = useState(50);
+  const [path, setPath] = useState<CellIdentifier[]>([]);
+
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const resetCells = () => {
+    if (isAnimating) {
+      timeoutsRef.current.forEach(clearTimeout);
+      timeoutsRef.current = [];
+    }
+    
+
+    setCurrentAlgorithm('');
+    setAction('start');
+    setStart(null);
+    setEnd(null);
+
     const cells: Cell[][] = [];
     for (let row = 0; row < maxRows; row++) {
       const currentRow: Cell[] = [];
@@ -50,6 +74,9 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
     setCells(cells);
   };
 
+  useEffect(() => {
+    resetCells()
+  }, [])
   const handleCellClick = (row: number, col: number) => {
     const newCells = cells.map((row) => row.map((cell) => ({ ...cell })));
     const node = newCells[row][col];
@@ -63,10 +90,7 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
     setCells(newCells);
   };
 
-  useEffect(() => {
-    resetCells();
-  }, []);
-
+  // To check if the node is the start or end
   function isStart(cell: Cell | null): boolean {
     if (!cell || !start) return false;
     return cell.row === start.row && cell.col === start.col;
@@ -76,6 +100,66 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
     if (!cell || !end) return false;
     return cell.row === end.row && cell.col === end.col;
   }
+
+  // Pathfinding Animation Logic
+  const animatePathfinding = (type: 'dijkstra' | 'aStar' | 'bfs' | 'dfs') => {
+    if (isPathfindingComplete) {
+      resetCells();
+    }
+    
+    if (!start || !end) return
+
+    if (isAnimating) return;
+
+    setisAnimating(true);
+    let animations: Animation[] = [];
+
+    switch (type) {
+      case 'dijkstra':
+        animations = getDijkstraAnimations(cells, start, end);
+        setCurrentAlgorithm('Dijkstra');
+        break;
+      // case 'bfs':
+      //   animations = getBFSAnimations(cells, start, end);
+      //   setCurrentAlgorithm('BFS');
+      //   break;
+      // case 'dfs':
+      //   animations = getDFSAnimations(cells, start, end);
+      //   setCurrentAlgorithm('DFS');
+      //   break;
+      default:
+        return;
+    }
+
+    playPathfindingAnimations(animations);
+  };
+
+  const playPathfindingAnimations = (animations: Animation[]) => {
+    for (let i = 0; i < animations.length; i++) {
+      const timerId = setTimeout(() => {
+        const animation = animations[i];
+
+        if (animation.type === 'visit') {
+          const newCells = [...cells];
+          newCells[animation.node.row][animation.node.col].isVisited = true;
+          setCells(newCells);
+        } else if (animation.type === 'path') {
+          const newCells = [...cells];
+          newCells[animation.node.row][animation.node.col].previousNode = animation.node;
+          setCells(newCells);
+
+          setPath((prevPath) => [...prevPath, animation.node]);
+        }
+
+        // Finish the animation
+        if (i === animations.length - 1) {
+          setIsPathfindingComplete(true);
+          setisAnimating(false);
+        }
+      }, i * animationSpeed);
+      timeoutsRef.current.push(timerId)
+    }
+  };
 
   return (
     <div className="visualiser-wrapper">
@@ -90,16 +174,35 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
                 isWall={cell.isWall}
                 isStart={isStart(cell)}
                 isEnd={isEnd(cell)}
+                isVisited={cell.isVisited}
+                isPath={path.some((p) => p.row === cell.row && p.col === cell.col)} 
                 onClick={handleCellClick}
               />
             ))}
           </div>
         ))}
       </div>
+
       <div className="controls">
         <button onClick={() => setAction('start')}>Start Node</button>
         <button onClick={() => setAction('end')}>End Node</button>
         <button onClick={() => setAction('wall')}>Wall</button>
+
+        {/* Algorithm Selection */}
+        <button onClick={() => animatePathfinding('dijkstra')} disabled={isAnimating}>
+          Dijkstra
+        </button>
+        <button onClick={() => animatePathfinding('bfs')} disabled={isAnimating}>
+          BFS
+        </button>
+        <button onClick={() => animatePathfinding('dfs')} disabled={isAnimating}>
+          DFS
+        </button>
+
+        {/* Reset */}
+        <button onClick={resetCells} disabled={isAnimating}>
+          Reset Grid
+        </button>
       </div>
     </div>
   );

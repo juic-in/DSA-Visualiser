@@ -18,45 +18,12 @@
   display: flex;
 }
 
-.cell {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #ddd;
-  transition: background-color 0.2s ease;
-}
 
-.cell.wall {
-  background-color: blue;
-}
-
-.cell.start {
-  background-color: green;
-}
-
-.cell.end {
-  background-color: red;
-}
-
-.cell:hover {
-  background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent white */
-}
-
-.cell.start:hover {
-  background-color: rgba(0, 128, 0, 0.5); /* Semi-transparent green */
-}
-
-.cell.end:hover {
-  background-color: rgba(255, 0, 0, 0.5); /* Semi-transparent red */
-}
-
-/* Ensure the wall node keeps its black color and transparency */
-.cell.wall:hover {
-  background-color: rgba(108, 11, 219, 0.541); /* Semi-transparent black */
-}
 
 
 .controls {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   margin-top: 20px;
   gap: 10px; /* Space between buttons */
