@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import './PathfindingVisualiser.css'
+import './PathfindingVisualiser.css';
 interface Cell {
   row: Number;
   col: Number;
@@ -50,17 +50,19 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
   }, []);
 
   return (
-  <div className="cells-container">
-    {cells.map((row, rowIndex) => (
-      <div key={rowIndex} className="row">
-        {row.map((cell, colIndex) => (
-          <div key={colIndex} className="cell">
-            
-          </div>
-        ))}
-      </div>
-    ))}
-  </div>
-);
-
+    <div className="cells-container">
+      {cells.map((row, rowIndex) => (
+        <div key={rowIndex} className="row">
+          {row.map((cell, colIndex) => (
+            <div
+              key={colIndex}
+              className={`cell ${cell.isWall ? 'wall' : ''} ${
+                cell.isStart ? 'start' : ''
+              } ${cell.isEnd ? 'end' : ''}`}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
 };
