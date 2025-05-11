@@ -119,8 +119,9 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
 
   return (
     <div className="main-container">
+      <div className="algo-type-text">Current Algorithm: {currentAlgorithm}</div>
+
       <div className="visualiser-wrapper">
-        <p className="algo-type-text">Current Algorithm: {currentAlgorithm}</p>
         <div className="array-container">
           {renderingArray.map((value, index) => (
             <div
@@ -138,19 +139,17 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
         </div>
 
         <div className="controls">
-          <div className="buttons-container">
-            <button onClick={() => resetArray()}>Generate New Array</button>
-            <button onClick={() => animateSort('merge')}>Merge Sort</button>
-            <button onClick={() => animateSort('quick')}>Quick Sort</button>
-            <button onClick={() => animateSort('bubble')}>Bubble Sort</button>
-            <button onClick={() => animateSort('selection')}>
-              Selection Sort
-            </button>
-            <button onClick={() => animateSort('insertion')}>
-              Insertion Sort
-            </button>
-            <button onClick={() => animateSort('bogo')}>Bogo Sort</button>
-          </div>
+          <button onClick={() => resetArray()}>Generate New Array</button>
+          <button onClick={() => animateSort('merge')}>Merge Sort</button>
+          <button onClick={() => animateSort('quick')}>Quick Sort</button>
+          <button onClick={() => animateSort('bubble')}>Bubble Sort</button>
+          <button onClick={() => animateSort('selection')}>
+            Selection Sort
+          </button>
+          <button onClick={() => animateSort('insertion')}>
+            Insertion Sort
+          </button>
+          <button onClick={() => animateSort('bogo')}>Bogo Sort</button>
 
           <div className="speed-slider-container">
             <label htmlFor="animationSpeed">Animation Speed: </label>

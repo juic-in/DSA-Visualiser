@@ -1,21 +1,35 @@
+/* Main container: no fixed positioning */
 .main-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
   width: 100%;
-  height: auto; 
-  margin: 0; 
-  padding: 0; 
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Algo text appears at the top, fixed for visibility */
+.algo-type-text {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  padding: 10px 0;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Wrapper sits below the fixed algo text */
 .visualiser-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-top: 320px; /* Leaves space for the fixed header */
   width: 100%;
-  height: 100%; 
+  height: calc(100vh - 320px); /* Adjusts to remaining height */
 }
 
+/* Array bars visualisation */
 .array-container {
   display: flex;
   justify-content: center;
@@ -23,15 +37,6 @@
   width: 100%;
   height: 60vh;
   margin-top: 20px;
-}
-
-.controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  margin-top: 20px;
-  margin-bottom: 20px;
 }
 
 .array-bar {
@@ -50,13 +55,25 @@
   background-color: green;
 }
 
-.buttons-container {
+/* Controls wrapper */
+.controls {
   display: flex;
+  flex-direction: row;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  align-items: center;
+  gap: 20px;
+  margin: 20px 0;
 }
 
+/* Buttons container (left side of controls) */
+.buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Slider container (right side of controls) */
 .speed-slider-container {
   display: flex;
   align-items: center;
