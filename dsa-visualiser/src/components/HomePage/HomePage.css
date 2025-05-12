@@ -1,0 +1,58 @@
+.visualiser-redirects {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(to right, #2c3e50, #3498db);
+  color: white;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.title {
+  font-size: 3rem;
+  margin-bottom: 3rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.button-group {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.redirect-button {
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.redirect-sorting {
+  background-color: #e67e22;
+  color: white;
+}
+
+.redirect-sorting:hover {
+  background-color: #d35400;
+}
+
+.redirect-pathfinding {
+  background-color: #1abc9c;
+  color: white;
+}
+
+.redirect-pathfinding:hover {
+  background-color: #16a085;
+}
+
+.visualiser-redirects {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
