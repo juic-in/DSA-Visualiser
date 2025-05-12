@@ -4,6 +4,7 @@ import { getMergeSortAnimations } from './SortingAlgorithms/MergeSort';
 import { getBubbleSortAnimations } from './SortingAlgorithms/BubbleSort';
 import { getInsertionSortAnimations } from './SortingAlgorithms/InsertionSort';
 import { getQuickSortAnimations } from './SortingAlgorithms/QuickSort';
+import { AlgorithmHeader } from '../AlgoHeader/AlgorithmHeader';
 
 export type Animation =
   | { type: 'compare'; indices: [number, number] }
@@ -25,9 +26,6 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
   const [currentAlgorithm, setCurrentAlgorithm] = useState('');
 
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-
-  const barMargin = 2;
-  const barWidth = Math.floor(windowWidth / arraySize) - barMargin;
 
   const resetArray = () => {
     if (isAnimating) {
@@ -70,20 +68,19 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
     switch (type) {
       case 'merge':
         animations = getMergeSortAnimations(renderingArray.slice());
-        setCurrentAlgorithm('Merge-Sort')
+        setCurrentAlgorithm('Merge-Sort');
         break;
       case 'bubble':
         animations = getBubbleSortAnimations(renderingArray.slice());
-        setCurrentAlgorithm('Bubble-Sort')
+        setCurrentAlgorithm('Bubble-Sort');
         break;
       case 'insertion':
         animations = getInsertionSortAnimations(renderingArray.slice());
-        setCurrentAlgorithm('Insertion-Sort')
+        setCurrentAlgorithm('Insertion-Sort');
         break;
       case 'quick':
         animations = getQuickSortAnimations(renderingArray.slice());
-        setCurrentAlgorithm('Bubble-Sort')
-
+        setCurrentAlgorithm('Quick-Sort');
         break;
     }
 
@@ -117,10 +114,12 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
     }
   };
 
-  return (
-    <div className="main-container">
-      <div className="algo-type-text">Current Algorithm: {currentAlgorithm}</div>
+  const containerWidth = windowWidth - 40; // minus padding
+  const barWidth = containerWidth / renderingArray.length - 2; // account for margin
 
+  return (
+    <div className="sorting-container">
+      <AlgorithmHeader currentAlgorithm={currentAlgorithm} />
       <div className="visualiser-wrapper">
         <div className="array-container">
           {renderingArray.map((value, index) => (
@@ -149,8 +148,6 @@ export const SortingVisualiser = ({ arraySize, min, max }: Props) => {
           <button onClick={() => animateSort('insertion')}>
             Insertion Sort
           </button>
-          <button onClick={() => animateSort('bogo')}>Bogo Sort</button>
-
           <div className="speed-slider-container">
             <label htmlFor="animationSpeed">Animation Speed: </label>
             <input
