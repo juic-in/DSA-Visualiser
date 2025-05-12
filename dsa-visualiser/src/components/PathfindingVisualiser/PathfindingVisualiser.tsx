@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import './PathfindingVisualiser.css';
 import { Cell } from './Cell';
 import { getDijkstraAnimations } from './PathfindingAlgorithms/Dijkstra';
+import { getDfsAnimations } from './PathfindingAlgorithms/Dfs';
+import { AlgorithmHeader } from '../AlgoHeader/AlgorithmHeader';
 
 export interface Cell {
   row: number;
@@ -58,6 +60,7 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
     }
 
     setisAnimating(false);
+    setIsPathfindingComplete(false);
     setPath([]);
     setCurrentAlgorithm('');
     setAction('start');
@@ -79,6 +82,8 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
     resetCells();
   }, []);
   const handleCellClick = (row: number, col: number) => {
+    if (isAnimating || isPathfindingComplete) return;
+
     const newCells = cells.map((row) => row.map((cell) => ({ ...cell })));
     const node = newCells[row][col];
     if (action === 'wall') {
@@ -138,6 +143,15 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
         animations = getDijkstraAnimations(cells, start, end);
         setCurrentAlgorithm('Dijkstra');
         break;
+      case 'dfs':
+        animations = getDfsAnimations(cells, start, end);
+        setCurrentAlgorithm('Dfs');
+        break;
+      case 'bfs':
+        // Place holder until weighted grids are added, since dijkstra behaves the same as bfs in unweighted graphs
+        animations = getDijkstraAnimations(cells, start, end);
+        setCurrentAlgorithm('Bfs');
+        break;
       default:
         return;
     }
@@ -180,58 +194,73 @@ export const PathfindingVisualiser = ({ maxRows, maxCols }: Props) => {
   };
 
   return (
-    <div className="visualiser-wrapper">
-      <div className="cells-container">
-        {cells.map((row, rowIndex) => (
-          <div key={rowIndex} className="row">
-            {row.map((cell, colIndex) => (
-              <Cell
-                key={colIndex}
-                row={cell.row}
-                col={cell.col}
-                isWall={cell.isWall}
-                isStart={isStart(cell)}
-                isEnd={isEnd(cell)}
-                isVisited={cell.isVisited}
-                isPath={path.some(
-                  (p) => p.row === cell.row && p.col === cell.col
-                )}
-                onClick={handleCellClick}
-              />
-            ))}
+    <div className="pathfinding-container">
+      <AlgorithmHeader currentAlgorithm={currentAlgorithm} />
+      <div className="visualiser-wrapper">
+        <div className="cells-container">
+          {cells.map((row, rowIndex) => (
+            <div key={rowIndex} className="row">
+              {row.map((cell, colIndex) => (
+                <Cell
+                  key={colIndex}
+                  row={cell.row}
+                  col={cell.col}
+                  isWall={cell.isWall}
+                  isStart={isStart(cell)}
+                  isEnd={isEnd(cell)}
+                  isVisited={cell.isVisited}
+                  isPath={path.some(
+                    (p) => p.row === cell.row && p.col === cell.col
+                  )}
+                  onClick={handleCellClick}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div className="controls">
+          <button onClick={() => setAction('start')}>Start Node</button>
+          <button onClick={() => setAction('end')}>End Node</button>
+          <button onClick={() => setAction('wall')}>Wall</button>
+
+          {/* Algorithm Selection */}
+          <button
+            onClick={() => animatePathfinding('dijkstra')}
+            disabled={isAnimating}
+          >
+            Dijkstra
+          </button>
+          <button
+            onClick={() => animatePathfinding('bfs')}
+            disabled={isAnimating}
+          >
+            BFS
+          </button>
+          <button
+            onClick={() => animatePathfinding('dfs')}
+            disabled={isAnimating}
+          >
+            DFS
+          </button>
+
+          {/* Reset */}
+          <button onClick={resetCells} disabled={isAnimating}>
+            Reset Grid
+          </button>
+          <div className="speed-slider-container">
+            <label htmlFor="animationSpeed">Animation Speed: </label>
+            <input
+              id="animationSpeed"
+              type="range"
+              min="1"
+              max="100"
+              value={animationSpeed}
+              onChange={(e) => setAnimationSpeed(Number(e.target.value))}
+            />
+            <span>{animationSpeed}</span>
           </div>
-        ))}
-      </div>
-
-      <div className="controls">
-        <button onClick={() => setAction('start')}>Start Node</button>
-        <button onClick={() => setAction('end')}>End Node</button>
-        <button onClick={() => setAction('wall')}>Wall</button>
-
-        {/* Algorithm Selection */}
-        <button
-          onClick={() => animatePathfinding('dijkstra')}
-          disabled={isAnimating}
-        >
-          Dijkstra
-        </button>
-        <button
-          onClick={() => animatePathfinding('bfs')}
-          disabled={isAnimating}
-        >
-          BFS
-        </button>
-        <button
-          onClick={() => animatePathfinding('dfs')}
-          disabled={isAnimating}
-        >
-          DFS
-        </button>
-
-        {/* Reset */}
-        <button onClick={resetCells} disabled={isAnimating}>
-          Reset Grid
-        </button>
+        </div>
       </div>
     </div>
   );
